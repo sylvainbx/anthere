@@ -1,0 +1,33 @@
+name: anthere
+
+services:
+  server:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: final
+    ports:
+      - 7878:7878
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - ../postgresql/data:/var/lib/postgresql/data
+    restart: always
+    secrets:
+      - db-password
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/db-password
+      POSTGRES_DB: anthere
+    healthcheck:
+      test: [ "CMD", "pg_isready -u postgres" ]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    ports:
+      - 5432:5432
+secrets:
+  db-password:
+    file: ../postgresql/password.txt

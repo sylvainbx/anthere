@@ -1,0 +1,5 @@
+.idea
+/target
+/postgresql/password.txt
+/postgresql/data
+.env
