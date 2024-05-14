@@ -8,4 +8,3 @@ Dig up your chat archives
   - diesel: `cargo install diesel_cli --no-default-features --features postgres`
 ### Create an .env file
   `echo DATABASE_URL=postgres://username:password@localhost/anthere > .env`
-3. 
