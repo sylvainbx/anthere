@@ -7,11 +7,16 @@ edition = "2021"
 
 [dependencies]
 axum = "0.7.5"
+axum-login = "0.15.1"
 chrono = "0.4.38"
-diesel = { version = "2.1.6", features = ["postgres", "chrono", "ipnet-address"] }
+diesel = { version = "2.1.6", features = ["chrono", "ipnet-address", "postgres", "r2d2"] }
+diesel_migrations = "2.1.0"
 dotenvy = "0.15.7"
 ipnet = "2.9.0"
+password-auth = "1.0.0"
+r2d2 = "0.8.10"
 serde = { version = "1.0.201", features = ["derive"] }
 tokio = { version = "1.37.0", features = ["full"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["fmt"] }
+async-trait = "0.1.80"

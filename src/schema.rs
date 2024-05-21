@@ -4,7 +4,7 @@ diesel::table! {
     users (id) {
         id -> Int4,
         email -> Varchar,
-        password_hash -> Bytea,
+        password -> Varchar,
         reset_password_token -> Nullable<Varchar>,
         reset_password_sent_at -> Nullable<Timestamp>,
         sign_in_count -> Int4,

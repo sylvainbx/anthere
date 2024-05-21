@@ -1,7 +1,7 @@
 CREATE TABLE users (
                        id SERIAL PRIMARY KEY,
-                       email VARCHAR NOT NULL,
-                       password_hash BYTEA NOT NULL,
+                       email VARCHAR NOT NULL UNIQUE,
+                       password VARCHAR NOT NULL,
                        reset_password_token VARCHAR,
                        reset_password_sent_at TIMESTAMP,
                        sign_in_count INT DEFAULT 0 NOT NULL,
