@@ -6,17 +6,23 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+async-trait = "0.1.80"
 axum = "0.7.5"
 axum-login = "0.15.1"
 chrono = "0.4.38"
-diesel = { version = "2.1.6", features = ["chrono", "ipnet-address", "postgres", "r2d2"] }
+diesel = { version = "2.1.6", features = ["chrono", "ipnet-address", "postgres", "r2d2", "time"] }
 diesel_migrations = "2.1.0"
 dotenvy = "0.15.7"
 ipnet = "2.9.0"
 password-auth = "1.0.0"
 r2d2 = "0.8.10"
+rmp-serde = "1.3.0"
 serde = { version = "1.0.201", features = ["derive"] }
+serde_json = "1.0.117"
+time = "0.3.36"
 tokio = { version = "1.37.0", features = ["full"] }
+tower-sessions = { version = "0.12.2", default-features = false, features = ["signed"] }
+tower-sessions-core = { version = "0.12.2", features = ["deletion-task"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["fmt"] }
-async-trait = "0.1.80"
+url = "2.5.0"

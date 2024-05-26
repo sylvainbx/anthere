@@ -1,6 +1,14 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
+    sessions (id) {
+        id -> Text,
+        data -> Bytea,
+        expiry_date -> Timestamptz,
+    }
+}
+
+diesel::table! {
     users (id) {
         id -> Int4,
         email -> Varchar,
@@ -19,3 +27,8 @@ diesel::table! {
         updated_at -> Timestamp,
     }
 }
+
+diesel::allow_tables_to_appear_in_same_query!(
+    sessions,
+    users,
+);

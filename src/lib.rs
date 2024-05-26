@@ -12,6 +12,8 @@ pub use config::Config;
 mod server;
 pub use server::Server;
 
+mod store;
+
 mod auth;
 
 pub fn get_connection_pool(config: &Config) -> Pool<ConnectionManager<PgConnection>> {
