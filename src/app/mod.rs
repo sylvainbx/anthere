@@ -9,17 +9,16 @@ use crate::auth::Backend;
 use crate::errors::adapt_app_error;
 use crate::store::PgStore;
 
-
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("src/db/migrations/");
 
 pub mod routes;
 
-pub struct Server {
+pub struct App {
     db: Pool<ConnectionManager<PgConnection>>,
     config: Config
 }
 
-impl Server {
+impl App {
     pub async fn new() -> Result<Self, Box<dyn std::error::Error>> {
 
         let config = Config::new().map_err(adapt_app_error)?;
@@ -28,7 +27,7 @@ impl Server {
         let mut conn = db.get().map_err(adapt_app_error)?;
         conn.run_pending_migrations(MIGRATIONS).map_err(adapt_app_error)?;
 
-        Ok(Server { db, config })
+        Ok(App { db, config })
     }
     
     pub async fn serve(&self) -> Result<(), Box<dyn std::error::Error>> {
@@ -52,11 +51,20 @@ impl Server {
         let backend = Backend::new(self.db.clone());
         let auth_layer = AuthManagerLayerBuilder::new(backend, session_layer).build();
         
+        //TODO
+        // let app = protected::router()
+        //     .route_layer(login_required!(Backend, login_url = "/login"))
+        //     .merge(auth::router())
+        //     .layer(MessagesManagerLayer)
+        //     .layer(auth_layer);
+        
         let addr = format!("{}:{}", self.config.host, self.config.port);
         let listener = tokio::net::TcpListener::bind(addr).await?;
         
         tracing::debug!("listening on {}", listener.local_addr()?);
         axum::serve(listener, routes::router()).await?;
+        
+        deletion_task.await??;
         
         Ok(())
     }

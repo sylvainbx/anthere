@@ -11,8 +11,8 @@ pub mod errors;
 mod config;
 pub use config::Config;
 
-mod server;
-pub use server::Server;
+mod app;
+pub use app::App;
 
 mod store;
 
