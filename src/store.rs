@@ -161,85 +161,97 @@ fn adapt_session_result(session: Session) -> Result<Record, rmp_serde::decode::E
 
 #[cfg(test)]
 mod tests {
+    use futures::FutureExt;
     use time::{Duration, OffsetDateTime};
-    use crate::{Config, get_connection_pool};
+    use crate::{Config};
+    use crate::db::TestDb;
     use super::*;
 
-    fn get_db_pool() -> Pool<ConnectionManager<PgConnection>> {
+    fn get_db_pool() -> TestDb {
         let config = Config::new().unwrap();
-        get_connection_pool(&config)
+        TestDb::new(&config)
     }
 
     #[tokio::test]
     async fn test_create() {
         let db = get_db_pool();
-        let store = PgStore::new(db);
-        let mut record = Record {
-            id: Default::default(),
-            data: Default::default(),
-            expiry_date: OffsetDateTime::now_utc() + Duration::minutes(30),
-        };
-        assert!(store.create(&mut record).await.is_ok());
+        db.run_test(|pool| async move {
+            let store = PgStore::new(pool);
+            let mut record = Record {
+                id: Default::default(),
+                data: Default::default(),
+                expiry_date: OffsetDateTime::now_utc() + Duration::minutes(30),
+            };
+            assert!(store.create(&mut record).await.is_ok());
+        }.boxed()).await;
     }
 
     #[tokio::test]
     async fn test_save() {
         let db = get_db_pool();
-        let store = PgStore::new(db);
-        let record = Record {
-            id: Default::default(),
-            data: Default::default(),
-            expiry_date: OffsetDateTime::now_utc() + Duration::minutes(30),
-        };
-        assert!(store.save(&record).await.is_ok());
+        db.run_test(|pool| async move {
+            let store = PgStore::new(pool);
+            let record = Record {
+                id: Default::default(),
+                data: Default::default(),
+                expiry_date: OffsetDateTime::now_utc() + Duration::minutes(30),
+            };
+            assert!(store.save(&record).await.is_ok());
+        }.boxed()).await;
     }
 
     #[tokio::test]
     async fn test_load() {
         let db = get_db_pool();
-        let store = PgStore::new(db);
-        let mut record = Record {
-            id: Default::default(),
-            data: Default::default(),
-            expiry_date: OffsetDateTime::now_utc() + Duration::minutes(30),
-        };
-        store.create(&mut record).await.unwrap();
-        let loaded_record = store.load(&record.id).await.unwrap();
-        assert_eq!(Some(record), loaded_record);
+        db.run_test(|pool| async move {
+            let store = PgStore::new(pool);
+            let mut record = Record {
+                id: Default::default(),
+                data: Default::default(),
+                expiry_date: OffsetDateTime::now_utc() + Duration::minutes(30),
+            };
+            store.create(&mut record).await.unwrap();
+            let loaded_record = store.load(&record.id).await.unwrap();
+            assert_eq!(Some(record), loaded_record);
+        }.boxed()).await;
     }
 
     #[tokio::test]
     async fn test_delete() {
         let db = get_db_pool();
-        let store = PgStore::new(db);
-        let mut record = Record {
-            id: Default::default(),
-            data: Default::default(),
-            expiry_date: OffsetDateTime::now_utc() + Duration::minutes(30),
-        };
-        store.create(&mut record).await.unwrap();
-        assert!(store.delete(&record.id).await.is_ok());
-        assert_eq!(None, store.load(&record.id).await.unwrap());
+        db.run_test(|pool| async move {
+            let store = PgStore::new(pool);
+            let mut record = Record {
+                id: Default::default(),
+                data: Default::default(),
+                expiry_date: OffsetDateTime::now_utc() + Duration::minutes(30),
+            };
+            store.create(&mut record).await.unwrap();
+            assert!(store.delete(&record.id).await.is_ok());
+            assert_eq!(None, store.load(&record.id).await.unwrap());
+        }.boxed()).await;
     }
 
     #[tokio::test]
     async fn test_create_id_collision() {
         let db = get_db_pool();
-        let store = PgStore::new(db);
-        let expiry_date = OffsetDateTime::now_utc() + Duration::minutes(30);
-        let mut record1 = Record {
-            id: Default::default(),
-            data: Default::default(),
-            expiry_date,
-        };
-        let mut record2 = Record {
-            id: Default::default(),
-            data: Default::default(),
-            expiry_date,
-        };
-        store.create(&mut record1).await.unwrap();
-        record2.id = record1.id; // Set the same ID for record2
-        store.create(&mut record2).await.unwrap();
-        assert_ne!(record1.id, record2.id); // IDs should be different
+        db.run_test(|pool| async move {
+            let store = PgStore::new(pool);
+            let expiry_date = OffsetDateTime::now_utc() + Duration::minutes(30);
+            let mut record1 = Record {
+                id: Default::default(),
+                data: Default::default(),
+                expiry_date,
+            };
+            let mut record2 = Record {
+                id: Default::default(),
+                data: Default::default(),
+                expiry_date,
+            };
+            store.create(&mut record1).await.unwrap();
+            record2.id = record1.id; // Set the same ID for record2
+            store.create(&mut record2).await.unwrap();
+            assert_ne!(record1.id, record2.id); // IDs should be different
+        }.boxed()).await;
     }
 }

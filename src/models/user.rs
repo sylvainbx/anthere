@@ -54,3 +54,10 @@ impl AuthUser for User {
         &self.password.as_bytes()
     }
 }
+
+#[derive(Insertable)]
+#[diesel(table_name = crate::schema::users)]
+pub struct NewUser<'a> {
+    pub email: &'a str,
+    pub password: String,
+}

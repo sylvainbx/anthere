@@ -1,6 +1,8 @@
 use diesel::PgConnection;
 use diesel::r2d2::{ConnectionManager, Pool};
 
+mod db;
+
 pub mod models;
 pub mod schema;
 
@@ -16,8 +18,8 @@ mod store;
 
 mod auth;
 
-pub fn get_connection_pool(config: &Config) -> Pool<ConnectionManager<PgConnection>> {
-    let manager = ConnectionManager::<PgConnection>::new(&config.database_url);
+pub fn get_connection_pool(database_url: &str) -> Pool<ConnectionManager<PgConnection>> {
+    let manager = ConnectionManager::<PgConnection>::new(database_url);
     // Refer to the `r2d2` documentation for more methods to use
     // when building a connection pool
     Pool::builder()

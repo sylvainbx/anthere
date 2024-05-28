@@ -13,12 +13,12 @@ chrono = "0.4.38"
 diesel = { version = "2.1.6", features = ["chrono", "ipnet-address", "postgres", "r2d2", "time"] }
 diesel_migrations = "2.1.0"
 dotenvy = "0.15.7"
+futures = "0.3.30"
 ipnet = "2.9.0"
 password-auth = "1.0.0"
 r2d2 = "0.8.10"
 rmp-serde = "1.3.0"
 serde = { version = "1.0.201", features = ["derive"] }
-serde_json = "1.0.117"
 time = "0.3.36"
 tokio = { version = "1.37.0", features = ["full"] }
 tower-sessions = { version = "0.12.2", default-features = false, features = ["signed"] }

@@ -1,3 +1,4 @@
+use axum_login::AuthManagerLayerBuilder;
 use tower_sessions::cookie::Key;
 use diesel::PgConnection;
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
@@ -22,7 +23,7 @@ impl Server {
     pub async fn new() -> Result<Self, Box<dyn std::error::Error>> {
 
         let config = Config::new().map_err(adapt_app_error)?;
-        let db = get_connection_pool(&config);
+        let db = get_connection_pool(&config.database_url);
         
         let mut conn = db.get().map_err(adapt_app_error)?;
         conn.run_pending_migrations(MIGRATIONS).map_err(adapt_app_error)?;
@@ -49,6 +50,8 @@ impl Server {
         
         // handle the authentication
         let backend = Backend::new(self.db.clone());
+        let auth_layer = AuthManagerLayerBuilder::new(backend, session_layer).build();
+        
         let addr = format!("{}:{}", self.config.host, self.config.port);
         let listener = tokio::net::TcpListener::bind(addr).await?;
         
