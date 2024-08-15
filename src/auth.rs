@@ -21,7 +21,6 @@ impl Backend {
 pub struct Credentials {
     pub email: String,
     pub password: String,
-    pub next: Option<String>
 }
 
 #[async_trait]
@@ -102,7 +101,6 @@ mod tests {
             let creds = Credentials {
                 email: user.email.to_string(),
                 password: "passw0rd".to_string(),
-                next: None
             };
             let res = backend.authenticate(creds).await.unwrap();
             assert!(res.is_some());

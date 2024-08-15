@@ -1,4 +1,5 @@
 use std::{env, fmt};
+use axum_csrf::CsrfConfig;
 
 #[derive(PartialEq)]
 enum AppEnv {
@@ -17,7 +18,8 @@ impl fmt::Display for AppEnv {
 pub struct Config {
     pub database_url: String,
     pub port: u16,
-    pub host: std::net::Ipv4Addr
+    pub host: std::net::Ipv4Addr,
+    pub csrf_config: CsrfConfig,
 }
 
 
@@ -48,7 +50,9 @@ impl Config {
             .unwrap_or(String::from("127.0.0.1"))
             .parse::<std::net::Ipv4Addr>()
             .or(Err("HOST is not a valid IP V4 address"))?;
+        
+        let csrf_config = CsrfConfig::default();
 
-        Ok(Config { database_url, port, host })
+        Ok(Config { database_url, port, host, csrf_config })
     }
 }

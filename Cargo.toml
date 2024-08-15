@@ -7,7 +7,9 @@ edition = "2021"
 
 [dependencies]
 async-trait = "0.1.80"
-axum = "0.7.5"
+axum = { version = "0.7.5", features = ["ws"] }
+axum_csrf = { version = "0.9.0", features = ["layer"] }
+axum-extra = { version = "0.9.3", features = ["typed-header"] }
 axum-login = "0.15.1"
 chrono = "0.4.38"
 diesel = { version = "2.1.6", features = ["chrono", "ipnet-address", "postgres", "r2d2", "time"] }

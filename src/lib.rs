@@ -18,6 +18,8 @@ mod store;
 
 mod auth;
 
+pub mod csrf;
+
 pub fn get_connection_pool(database_url: &str) -> Pool<ConnectionManager<PgConnection>> {
     let manager = ConnectionManager::<PgConnection>::new(database_url);
     // Refer to the `r2d2` documentation for more methods to use
